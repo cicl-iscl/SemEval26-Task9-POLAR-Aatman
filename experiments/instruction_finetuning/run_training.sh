@@ -41,17 +41,6 @@ mkdir -p logs
 
 echo ""
 
-# 3. Verify environment
-echo "Verifying environment..."
-python -c "import torch; print(f'PyTorch version: {torch.__version__}')"
-python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
-python -c "import torch; print(f'CUDA version: {torch.version.cuda}')" 
-python -c "import torch; print(f'GPU count: {torch.cuda.device_count()}')"
-if python -c "import torch; torch.cuda.is_available()" 2>/dev/null; then
-    python -c "import torch; print(f'GPU name: {torch.cuda.get_device_name(0)}')"
-fi
-echo ""
-
 # 4. Check for .env file
 if [ ! -f .env ]; then
     echo "ERROR: .env file not found!"
