@@ -89,8 +89,7 @@ uv run train_llama_guard.py \
     --max_seq_length 512 \
     --lora_r 16 \
     --lora_alpha 32 \
-    --lora_dropout 0.05 \
-    # --test_sample_size 500
+    --lora_dropout 0.05
 
 EXIT_CODE=$?
 
