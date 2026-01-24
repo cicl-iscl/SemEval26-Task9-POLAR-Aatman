@@ -71,46 +71,44 @@ echo "  Train: $TRAIN_DATA_PATH"
 echo "  Dev: $DEV_DATA_PATH"
 echo ""
 
-uv run hello.py
+# 6. Execute training with uv
+echo "=========================================="
+echo "Starting Llama-Guard-3-8B training..."
+echo "=========================================="
+echo ""
 
-# # 6. Execute training with uv
-# echo "=========================================="
-# echo "Starting Llama-Guard-3-8B training..."
-# echo "=========================================="
-# echo ""
+uv run train_llama_guard.py \
+    --train_data_path "$TRAIN_DATA_PATH" \
+    --dev_data_path "$DEV_DATA_PATH" \
+    --output_dir "./llama-guard-3-8b-polarization" \
+    --predictions_dir "./predictions" \
+    --batch_size 4 \
+    --gradient_accumulation_steps 4 \
+    --learning_rate 2e-4 \
+    --num_epochs 3 \
+    --max_seq_length 512 \
+    --lora_r 16 \
+    --lora_alpha 32 \
+    --lora_dropout 0.05 \
+    # --test_sample_size 500
 
-# uv run train_llama_guard.py \
-#     --train_data_path "$TRAIN_DATA_PATH" \
-#     --dev_data_path "$DEV_DATA_PATH" \
-#     --output_dir "./llama-guard-3-8b-polarization" \
-#     --predictions_dir "./predictions" \
-#     --batch_size 4 \
-#     --gradient_accumulation_steps 4 \
-#     --learning_rate 2e-4 \
-#     --num_epochs 3 \
-#     --max_seq_length 512 \
-#     --lora_r 16 \
-#     --lora_alpha 32 \
-#     --lora_dropout 0.05 \
-#     # --test_sample_size 500
+EXIT_CODE=$?
 
-# EXIT_CODE=$?
+echo ""
+echo "=========================================="
+echo "Training job completed"
+echo "=========================================="
+echo "Exit code: $EXIT_CODE"
+echo "End time: $(date)"
+echo ""
 
-# echo ""
-# echo "=========================================="
-# echo "Training job completed"
-# echo "=========================================="
-# echo "Exit code: $EXIT_CODE"
-# echo "End time: $(date)"
-# echo ""
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "✓ Training completed successfully!"
+    echo "Model saved to: ./llama-guard-3-8b-polarization/"
+    echo "Predictions saved to: ./predictions/"
+else
+    echo "✗ Training failed with exit code $EXIT_CODE"
+    echo "Check logs for details: logs/${SLURM_JOB_NAME}_${SLURM_JOB_ID}.err"
+fi
 
-# if [ $EXIT_CODE -eq 0 ]; then
-#     echo "✓ Training completed successfully!"
-#     echo "Model saved to: ./llama-guard-3-8b-polarization/"
-#     echo "Predictions saved to: ./predictions/"
-# else
-#     echo "✗ Training failed with exit code $EXIT_CODE"
-#     echo "Check logs for details: logs/${SLURM_JOB_NAME}_${SLURM_JOB_ID}.err"
-# fi
-
-# exit $EXIT_CODE
+exit $EXIT_CODE
