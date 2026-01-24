@@ -32,8 +32,8 @@ echo ""
 
 # 2. Project Setup
 echo "Setting up project environment..."
-PROJECT_ROOT=/home/tu/tu_tu/tu_zxoqp65/work/cicl-iscl/SemEval26-Task9-POLAR-Aatman
-cd $PROJECT_ROOT/code/experiments/instruction_finetuning || exit 1
+PROJECT_ROOT=/home/tu/tu_tu/tu_zxord71/SemEval26-Task9-POLAR-Aatman
+cd $PROJECT_ROOT/experiments/instruction_finetuning || exit 1
 echo "Working directory: $(pwd)"
 
 # Create logs directory if it doesn't exist
@@ -62,8 +62,8 @@ echo ".env file found ✓"
 echo ""
 
 # 5. Data paths configuration
-TRAIN_DATA_PATH="../../subtask1/train"
-DEV_DATA_PATH="../../subtask1/dev"
+TRAIN_DATA_PATH="../../data/dev_phase/subtask1/train"
+DEV_DATA_PATH="../../data/dev_phase/subtask1/dev"
 
 # Verify data paths exist
 if [ ! -d "$TRAIN_DATA_PATH" ]; then
