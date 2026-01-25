@@ -421,7 +421,7 @@ class Trainer:
             # tokenizer=self.tokenizer,
             processing_class=self.tokenizer,
             formatting_func=self.formatting_prompts_func,
-            max_length=self.config.max_seq_length,
+            # max_seq_length=self.config.max_seq_length,
             callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
         )
 
