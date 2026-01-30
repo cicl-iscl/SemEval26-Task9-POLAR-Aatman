@@ -1,0 +1,61 @@
+==========================================
+mDeBERTa Finetuning Job
+==========================================
+Job ID: 3057543
+Node: uc2n909
+Start time: Fri Jan 30 03:49:19 PM CET 2026
+
+Loading modules...
+CUDA Home: /opt/bwhpc/common/devel/cuda/12.8
+Python: /opt/bwhpc/common/devel/python/3.13.3_llvm_19.1/bin/python
+
+Setting up project environment...
+Working directory: /home/tu/tu_tu/tu_zxord71/SemEval26-Task9-POLAR-Aatman/experiments/transfer_learning/finetune
+
+Data path: ../../../data/subtask1
+Model path: ./pretrain_mdeberta
+
+==========================================
+Starting mDeBERTa finetuning...
+==========================================
+
+{'loss': 0.579, 'grad_norm': 4.474578857421875, 'learning_rate': 1.9942174732872407e-05, 'epoch': 1.0}
+{'eval_loss': 0.4387142062187195, 'eval_f1': 0.7960291342644283, 'eval_accuracy': 0.7975576662143826, 'eval_runtime': 4.7083, 'eval_samples_per_second': 782.658, 'eval_steps_per_second': 24.637, 'epoch': 1.0}
+{'loss': 0.3909, 'grad_norm': 5.69277811050415, 'learning_rate': 1.9255185417976116e-05, 'epoch': 2.0}
+{'eval_loss': 0.4327136278152466, 'eval_f1': 0.8128266215545107, 'eval_accuracy': 0.8135685210312076, 'eval_runtime': 4.6083, 'eval_samples_per_second': 799.652, 'eval_steps_per_second': 25.172, 'epoch': 2.0}
+{'loss': 0.3118, 'grad_norm': 6.251887321472168, 'learning_rate': 1.8568196103079826e-05, 'epoch': 3.0}
+{'eval_loss': 0.4651719629764557, 'eval_f1': 0.8099070382505033, 'eval_accuracy': 0.8127544097693351, 'eval_runtime': 4.6004, 'eval_samples_per_second': 801.018, 'eval_steps_per_second': 25.215, 'epoch': 3.0}
+{'loss': 0.2408, 'grad_norm': 8.856316566467285, 'learning_rate': 1.7881206788183535e-05, 'epoch': 4.0}
+{'eval_loss': 0.5040359497070312, 'eval_f1': 0.8207554845682123, 'eval_accuracy': 0.8208955223880597, 'eval_runtime': 4.598, 'eval_samples_per_second': 801.429, 'eval_steps_per_second': 25.228, 'epoch': 4.0}
+{'loss': 0.1793, 'grad_norm': 8.145371437072754, 'learning_rate': 1.7194217473287244e-05, 'epoch': 5.0}
+{'eval_loss': 0.5820581316947937, 'eval_f1': 0.7990817477884417, 'eval_accuracy': 0.8010854816824966, 'eval_runtime': 4.5827, 'eval_samples_per_second': 804.111, 'eval_steps_per_second': 25.313, 'epoch': 5.0}
+{'loss': 0.1344, 'grad_norm': 6.4402923583984375, 'learning_rate': 1.650722815839095e-05, 'epoch': 5.99}
+{'eval_loss': 0.7558053135871887, 'eval_f1': 0.81767943197527, 'eval_accuracy': 0.8187245590230665, 'eval_runtime': 4.6147, 'eval_samples_per_second': 798.536, 'eval_steps_per_second': 25.137, 'epoch': 5.99}
+{'loss': 0.1059, 'grad_norm': 6.679409503936768, 'learning_rate': 1.582023884349466e-05, 'epoch': 6.99}
+{'eval_loss': 0.7938004732131958, 'eval_f1': 0.8109333915406776, 'eval_accuracy': 0.8122116689280868, 'eval_runtime': 4.6093, 'eval_samples_per_second': 799.47, 'eval_steps_per_second': 25.167, 'epoch': 6.99}
+{'train_runtime': 1793.3796, 'train_samples_per_second': 1170.907, 'train_steps_per_second': 18.301, 'train_loss': 0.27743258941813925, 'epoch': 6.99}
+
+==========================================
+Training job completed
+==========================================
+Exit code: 0
+End time: Fri Jan 30 04:22:14 PM CET 2026
+
+✓ Training completed successfully!
+Results saved to: ./finetune_results
+Submission zip created: ./subtask_1.zip
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc2n909
+Job ID: 3057543
+Cluster: uc3
+User/Group: tu_zxord71/tu_tu
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 16
+CPU Utilized: 00:31:17
+CPU Efficiency: 5.90% of 08:50:08 core-walltime
+Job Wall-clock time: 00:33:08
+Memory Utilized: 1.96 GB
+Memory Efficiency: 1.57% of 124.51 GB (124.51 GB/node)

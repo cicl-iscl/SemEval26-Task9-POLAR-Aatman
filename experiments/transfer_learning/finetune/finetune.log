@@ -1,0 +1,65 @@
+2026-01-30 15:50:44,198 - INFO - Using device: cuda
+2026-01-30 15:50:44,201 - INFO - Loading model from ./pretrain_mdeberta...
+2026-01-30 15:50:44,201 - WARNING - Error loading model with DebertaV2 classes: 
+DebertaV2Tokenizer requires the SentencePiece library but it was not found in your environment. Check out the instructions on the
+installation page of its repo: https://github.com/google/sentencepiece#installation and follow the ones
+that match your environment. Please note that you may need to restart your runtime after installation.
+. Trying AutoClasses...
+2026-01-30 15:50:47,840 - INFO - Loading Train Data...
+2026-01-30 15:50:48,331 - INFO - Loaded 73681 training examples
+2026-01-30 15:50:48,331 - INFO - Loading Dev Data (Used as internal Test)...
+2026-01-30 15:50:48,467 - INFO - Loaded 3687 dev examples
+2026-01-30 15:50:48,467 - INFO - Loading Test Data (For Submission)...
+2026-01-30 15:50:48,753 - INFO - Loaded 33288 test examples
+2026-01-30 15:50:48,753 - INFO - Preprocessing text (cleaning)...
+2026-01-30 15:50:57,780 - INFO - Shape after split:
+2026-01-30 15:50:57,780 - INFO - Train:      (69996, 4)
+2026-01-30 15:50:57,780 - INFO - Validation: (3685, 4)
+2026-01-30 15:50:57,780 - INFO - Test (Dev): (3687, 4)
+2026-01-30 15:50:57,957 - INFO - Tokenizing datasets...
+2026-01-30 15:51:28,514 - INFO - Starting training...
+2026-01-30 16:21:22,055 - INFO - Evaluating on Internal Test Set (Dev folder data)...
+2026-01-30 16:21:26,671 - INFO - 
+Classification Report:
+2026-01-30 16:21:26,678 - INFO - 
+               precision    recall  f1-score   support
+
+Not Polar (0)     0.8183    0.7724    0.7947      1744
+    Polar (1)     0.8055    0.8461    0.8253      1943
+
+     accuracy                         0.8112      3687
+    macro avg     0.8119    0.8092    0.8100      3687
+ weighted avg     0.8116    0.8112    0.8108      3687
+
+2026-01-30 16:21:26,680 - INFO - Macro F1: 0.8100
+2026-01-30 16:21:26,681 - INFO - 
+=== Macro F1 per Language ===
+2026-01-30 16:21:26,685 - INFO - amh: F1=0.6927, Acc=0.7771, Support=166
+2026-01-30 16:21:26,688 - INFO - arb: F1=0.8040, Acc=0.8047, Support=169
+2026-01-30 16:21:26,691 - INFO - ben: F1=0.8096, Acc=0.8133, Support=166
+2026-01-30 16:21:26,695 - INFO - deu: F1=0.6810, Acc=0.6855, Support=159
+2026-01-30 16:21:26,698 - INFO - eng: F1=0.7781, Acc=0.8063, Support=160
+2026-01-30 16:21:26,701 - INFO - fas: F1=0.8491, Acc=0.8841, Support=164
+2026-01-30 16:21:26,704 - INFO - hau: F1=0.7272, Acc=0.8956, Support=182
+2026-01-30 16:21:26,707 - INFO - hin: F1=0.7750, Acc=0.8832, Support=137
+2026-01-30 16:21:26,711 - INFO - ita: F1=0.6922, Acc=0.6928, Support=166
+2026-01-30 16:21:26,714 - INFO - khm: F1=0.6231, Acc=0.9127, Support=332
+2026-01-30 16:21:26,717 - INFO - mya: F1=0.8652, Acc=0.8681, Support=144
+2026-01-30 16:21:26,720 - INFO - nep: F1=0.8798, Acc=0.8800, Support=100
+2026-01-30 16:21:26,723 - INFO - ori: F1=0.7028, Acc=0.7797, Support=118
+2026-01-30 16:21:26,727 - INFO - pan: F1=0.8100, Acc=0.8100, Support=100
+2026-01-30 16:21:26,730 - INFO - pol: F1=0.7449, Acc=0.7479, Support=119
+2026-01-30 16:21:26,733 - INFO - rus: F1=0.7403, Acc=0.7784, Support=167
+2026-01-30 16:21:26,736 - INFO - spa: F1=0.6654, Acc=0.6667, Support=165
+2026-01-30 16:21:26,739 - INFO - swa: F1=0.8018, Acc=0.8023, Support=349
+2026-01-30 16:21:26,743 - INFO - tel: F1=0.7765, Acc=0.7797, Support=118
+2026-01-30 16:21:26,746 - INFO - tur: F1=0.8521, Acc=0.8522, Support=115
+2026-01-30 16:21:26,749 - INFO - urd: F1=0.6885, Acc=0.7345, Support=177
+2026-01-30 16:21:26,752 - INFO - zho: F1=0.8925, Acc=0.8925, Support=214
+2026-01-30 16:21:26,753 - INFO - 
+Average Macro F1 across languages: 0.7660
+2026-01-30 16:21:26,755 - INFO - Generating predictions for submission...
+2026-01-30 16:22:10,035 - INFO - Processing 22 languages for submission...
+2026-01-30 16:22:10,276 - INFO - Zipping prediction files...
+2026-01-30 16:22:10,370 - INFO - Created subtask_1.zip in /pfs/data6/home/tu/tu_tu/tu_zxord71/SemEval26-Task9-POLAR-Aatman/experiments/transfer_learning/finetune
+2026-01-30 16:22:10,370 - INFO - Saving final model to ./finetune_results/final_model...

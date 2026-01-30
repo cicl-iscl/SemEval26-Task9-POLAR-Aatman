@@ -219,3 +219,5 @@ __marimo__/
 submissions/
 
 **pretrain_mdeberta/
+**finetune_results/
+!finetune.log
