@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 import torch
 import evaluate
+import logging
+import re
+import emoji
 from datasets import Dataset, DatasetDict
 from sklearn.metrics import accuracy_score, classification_report, f1_score
 from sklearn.model_selection import train_test_split
@@ -18,6 +21,17 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+
+# Configure Logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler("finetune.log", mode="w"),
+    ],
+)
+logger = logging.getLogger(__name__)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Finetune mDeBERTa on Subtask 1")
@@ -32,10 +46,41 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     return parser.parse_args()
 
+def clean_text(text):
+    if pd.isna(text):
+        return text
+
+    # 1. lowercase
+    text = text.lower()
+
+    # 2. remove @USER mentions
+    text = re.sub(r'@user', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'@url', '', text, flags=re.IGNORECASE)
+
+    # 3. remove URLs (actual links or placeholder "URL")
+    # text = re.sub(r'http\S+|https\S+|url', '', text, flags=re.IGNORECASE)
+
+    # 4. remove underscores, repeated underscores
+    text = re.sub(r'_+', ' ', text)
+
+    # 5. remove slashes
+    text = text.replace('\\', ' ').replace('/', ' ')
+
+    # 6. remove emojis
+    text = emoji.replace_emoji(text, replace="")
+
+    # 7. remove quotation marks (normal + smart)
+    text = re.sub(r"[\"“”]", "", text)
+
+    # 8. normalize spaces
+    text = re.sub(r"\s+", " ", text).strip()
+
+    return text
+
 def load_split(split_dir):
     dfs = []
     if not os.path.exists(split_dir):
-        print(f"Directory not found: {split_dir}")
+        logger.error(f"Directory not found: {split_dir}")
         return pd.DataFrame()
         
     for file in os.listdir(split_dir):
@@ -57,18 +102,21 @@ def main():
     
     # Check device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
+    logger.info(f"Using device: {device}")
     
     # 1. Load Pretrained Model & Tokenizer
-    print(f"Loading model from {args.model_path}...")
+    logger.info(f"Loading model from {args.model_path}...")
     try:
         tokenizer = DebertaV2Tokenizer.from_pretrained(args.model_path)
         model = DebertaV2ForSequenceClassification.from_pretrained(args.model_path, num_labels=2)
     except Exception as e:
-        print(f"Error loading model: {e}")
-        print("Trying AutoTokenizer/AutoModel...")
-        tokenizer = AutoTokenizer.from_pretrained(args.model_path)
-        model = AutoModelForSequenceClassification.from_pretrained(args.model_path, num_labels=2)
+        logger.warning(f"Error loading model with DebertaV2 classes: {e}. Trying AutoClasses...")
+        try:
+            tokenizer = AutoTokenizer.from_pretrained(args.model_path)
+            model = AutoModelForSequenceClassification.from_pretrained(args.model_path, num_labels=2)
+        except Exception as e2:
+            logger.error(f"Failed to load model: {e2}")
+            return
         
     model.to(device)
     
@@ -77,19 +125,25 @@ def main():
     dev_dir = os.path.join(args.data_dir, "dev")
     test_dir = os.path.join(args.data_dir, "test")
     
-    print("Loading Train Data...")
+    logger.info("Loading Train Data...")
     raw_train_df = load_split(train_dir)
-    print(f"Loaded {len(raw_train_df)} training examples")
+    logger.info(f"Loaded {len(raw_train_df)} training examples")
     
-    print("Loading Dev Data (Used as internal Test)...")
+    logger.info("Loading Dev Data (Used as internal Test)...")
     raw_dev_df = load_split(dev_dir)
-    print(f"Loaded {len(raw_dev_df)} dev examples")
+    logger.info(f"Loaded {len(raw_dev_df)} dev examples")
     
-    print("Loading Test Data (For Submission)...")
+    logger.info("Loading Test Data (For Submission)...")
     raw_test_df = load_split(test_dir)
-    print(f"Loaded {len(raw_test_df)} test examples")
+    logger.info(f"Loaded {len(raw_test_df)} test examples")
     
-    # 3. Data Processing & Splitting
+    # 3. Preprocess Text
+    logger.info("Preprocessing text (cleaning)...")
+    raw_train_df["text"] = raw_train_df["text"].astype(str).apply(clean_text)
+    raw_dev_df["text"] = raw_dev_df["text"].astype(str).apply(clean_text)
+    raw_test_df["text"] = raw_test_df["text"].astype(str).apply(clean_text)
+    
+    # 4. Data Splitting
     # Rename 'polarization' to 'labels'
     if "polarization" in raw_train_df.columns:
         raw_train_df = raw_train_df.rename(columns={"polarization": "labels"})
@@ -108,10 +162,10 @@ def main():
     # Use Dev as Internal Test
     test_df = raw_dev_df.copy()
     
-    print("Shape after split:")
-    print(f"Train:      {train_df.shape}")
-    print(f"Validation: {val_df.shape}")
-    print(f"Test (Dev): {test_df.shape}")
+    logger.info("Shape after split:")
+    logger.info(f"Train:      {train_df.shape}")
+    logger.info(f"Validation: {val_df.shape}")
+    logger.info(f"Test (Dev): {test_df.shape}")
     
     # Create Dataset Objects
     train_dataset = Dataset.from_pandas(train_df[["text", "labels"]], preserve_index=False)
@@ -124,7 +178,7 @@ def main():
         "test": test_dataset
     })
     
-    # 4. Tokenization
+    # 5. Tokenization
     def tokenize_function(examples):
         return tokenizer(
             examples["text"], 
@@ -133,11 +187,11 @@ def main():
             max_length=256
         )
     
-    print("Tokenizing datasets...")
+    logger.info("Tokenizing datasets...")
     encoded_dataset = dataset.map(tokenize_function, batched=True)
     encoded_dataset.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"])
     
-    # 5. Training Setup
+    # 6. Training Setup
     steps_per_epoch = len(encoded_dataset["train"]) // (args.batch_size * args.gradient_accumulation_steps)
     eval_steps = steps_per_epoch
     
@@ -159,7 +213,7 @@ def main():
         eval_strategy="steps",
         logging_dir=os.path.join(args.output_dir, "logs"),
         report_to="none",
-        # fp16=torch.cuda.is_available(),
+        fp16=torch.cuda.is_available(),
     )
     
     metric_f1 = evaluate.load("f1")
@@ -181,44 +235,45 @@ def main():
         callbacks=[EarlyStoppingCallback(early_stopping_patience=3)],
     )
     
-    # 6. Train
-    print("Starting training...")
+    # 7. Train
+    logger.info("Starting training...")
     trainer.train()
     
-    # 7. Evaluation on Internal Test Set (Dev Folder)
-    print("Evaluating on Internal Test Set (Dev folder data)...")
+    # 8. Evaluation on Internal Test Set (Dev Folder)
+    logger.info("Evaluating on Internal Test Set (Dev folder data)...")
     preds_output = trainer.predict(encoded_dataset["test"])
     
     pred_labels = np.argmax(preds_output.predictions, axis=1)
     true_labels = preds_output.label_ids
     
-    print("\nClassification Report:")
-    print(classification_report(true_labels, pred_labels, target_names=["Not Polar (0)", "Polar (1)"], digits=4))
+    logger.info("\nClassification Report:")
+    report = classification_report(true_labels, pred_labels, target_names=["Not Polar (0)", "Polar (1)"], digits=4)
+    logger.info(f"\n{report}")
     
     macro_f1 = f1_score(true_labels, pred_labels, average='macro')
-    print(f"Macro F1: {macro_f1:.4f}")
+    logger.info(f"Macro F1: {macro_f1:.4f}")
     
     # Per-Language Analysis
     test_df["preds"] = pred_labels
-    print("\n=== Macro F1 per Language ===")
+    logger.info("\n=== Macro F1 per Language ===")
     results = []
     for lang in sorted(test_df["lang"].unique()):
         lang_df = test_df[test_df["lang"] == lang]
         f1 = f1_score(lang_df["labels"], lang_df["preds"], average="macro")
         acc = accuracy_score(lang_df["labels"], lang_df["preds"])
-        print(f"{lang}: F1={f1:.4f}, Acc={acc:.4f}, Support={len(lang_df)}")
+        logger.info(f"{lang}: F1={f1:.4f}, Acc={acc:.4f}, Support={len(lang_df)}")
         results.append({"lang": lang, "f1_macro": f1, "accuracy": acc, "count": len(lang_df)})
         
     results_df = pd.DataFrame(results)
-    print(f"\nAverage Macro F1 across languages: {results_df['f1_macro'].mean():.4f}")
+    logger.info(f"\nAverage Macro F1 across languages: {results_df['f1_macro'].mean():.4f}")
     
-    # 8. Generate Submission (Test Folder)
+    # 9. Generate Submission (Test Folder)
     submission_dir = args.submission_dir
     if os.path.exists(submission_dir):
         shutil.rmtree(submission_dir)
     os.makedirs(submission_dir)
     
-    print("Generating predictions for submission...")
+    logger.info("Generating predictions for submission...")
     
     # tokenize test set for submission
     submission_dataset = Dataset.from_pandas(raw_test_df[["text"]], preserve_index=False)
@@ -234,7 +289,7 @@ def main():
     
     # Save individual files
     languages = sorted(raw_test_df["lang"].unique())
-    print(f"Processing {len(languages)} languages for submission...")
+    logger.info(f"Processing {len(languages)} languages for submission...")
     
     for lang in languages:
         lang_df = raw_test_df[raw_test_df["lang"] == lang]
@@ -243,13 +298,13 @@ def main():
         output_path = os.path.join(submission_dir, f"pred_{lang}.csv")
         output_df.to_csv(output_path, index=False)
         
-    print("Zipping prediction files...")
+    logger.info("Zipping prediction files...")
     shutil.make_archive("subtask_1", "zip", submission_dir)
-    print(f"Created subtask_1.zip in {os.getcwd()}")
+    logger.info(f"Created subtask_1.zip in {os.getcwd()}")
     
     # Also save the final model
     final_model_path = os.path.join(args.output_dir, "final_model")
-    print(f"Saving final model to {final_model_path}...")
+    logger.info(f"Saving final model to {final_model_path}...")
     trainer.save_model(final_model_path)
     tokenizer.save_pretrained(final_model_path)
 

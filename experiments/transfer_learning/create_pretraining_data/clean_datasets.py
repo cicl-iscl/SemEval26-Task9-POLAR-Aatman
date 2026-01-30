@@ -20,9 +20,10 @@ def clean_text(text):
 
     # 2. remove @USER mentions
     text = re.sub(r'@user', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'@url', '', text, flags=re.IGNORECASE)
 
     # 3. remove URLs (actual links or placeholder "URL")
-    text = re.sub(r'http\S+|https\S+|url', '', text, flags=re.IGNORECASE)
+    # text = re.sub(r'http\S+|https\S+|url', '', text, flags=re.IGNORECASE)
 
     # 4. remove underscores, repeated underscores
     text = re.sub(r'_+', ' ', text)
