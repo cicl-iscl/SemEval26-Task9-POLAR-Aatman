@@ -1,0 +1,43 @@
+==========================================
+mDeBERTa Evaluation Job
+==========================================
+Job ID: 3063429
+Node: uc2n904
+Start time: Sat Jan 31 01:56:18 PM CET 2026
+
+Loading modules...
+CUDA Home: /opt/bwhpc/common/devel/cuda/12.8
+Python: /opt/bwhpc/common/devel/python/3.13.3_llvm_19.1/bin/python
+
+Setting up project environment...
+Working directory: /home/tu/tu_tu/tu_zxord71/SemEval26-Task9-POLAR-Aatman/experiments/transfer_learning/finetune
+
+Data path: ../../../data/subtask1/dev
+Model path: ./finetune_results/final_model
+
+==========================================
+Starting Evaluation...
+==========================================
+
+
+==========================================
+Evaluation job completed
+==========================================
+Exit code: 0
+End time: Sat Jan 31 01:58:45 PM CET 2026
+
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc2n904
+Job ID: 3063429
+Cluster: uc3
+User/Group: tu_zxord71/tu_tu
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 16
+CPU Utilized: 00:00:39
+CPU Efficiency: 1.55% of 00:41:52 core-walltime
+Job Wall-clock time: 00:02:37
+Memory Utilized: 1.44 GB
+Memory Efficiency: 1.16% of 124.51 GB (124.51 GB/node)
