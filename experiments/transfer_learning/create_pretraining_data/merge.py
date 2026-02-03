@@ -1,5 +1,6 @@
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 # ---------------- CONFIG ----------------
 DATASETS_DIR = Path("datasets")
@@ -11,7 +12,7 @@ CSV_FILES = [
     "macd.csv",
     "olid.csv",
     "toxigen.csv",
-    "uli.csv"
+    "uli.csv",
 ]
 # ---------------------------------------
 
@@ -20,7 +21,7 @@ dfs = []
 for csv_file in CSV_FILES:
     path = DATASETS_DIR / csv_file
     df = pd.read_csv(path)
-    df['source'] = df.get('source', csv_file.split('.')[0])  # fallback source
+    df["source"] = df.get("source", csv_file.split(".")[0])  # fallback source
     dfs.append(df)
 
 # 2. Check column names and types
@@ -36,30 +37,30 @@ for i, df in enumerate(dfs[1:], start=1):
 df_combined = pd.concat(dfs, ignore_index=True)
 
 # 4. Print overall annotation distribution (%)
-annotation_counts = df_combined['annotation'].value_counts(normalize=True) * 100
+annotation_counts = df_combined["annotation"].value_counts(normalize=True) * 100
 print("Overall annotation distribution (%):")
 print(annotation_counts.round(2))
 
 # 5. Print annotation distribution per source (%)
 print("\nAnnotation distribution per source (%):")
-source_groups = df_combined.groupby('source')['annotation']
+source_groups = df_combined.groupby("source")["annotation"]
 for source, group in source_groups:
     dist = group.value_counts(normalize=True) * 100
     print(f"\nSource: {source}")
     print(dist.round(2))
 
 # 6. Rename annotation column to labels
-df_combined = df_combined.rename(columns={'annotation': 'labels'})
+df_combined = df_combined.rename(columns={"annotation": "labels"})
 
 # 7. Keep only text and labels columns
-df_final = df_combined[['text', 'labels']]
+df_final = df_combined[["text", "labels"]]
 
 # 8. Save final combined CSV
-df_final.to_csv(OUTPUT_FILE, index=False, encoding='utf-8')
+df_final.to_csv(OUTPUT_FILE, index=False, encoding="utf-8")
 print(f"\nSaved combined pretrain dataset to: {OUTPUT_FILE}")
 print("Final shape:", df_final.shape)
 
-'''
+"""
 Overall annotation distribution (%):
 annotation
 0    54.42
@@ -112,4 +113,4 @@ Name: proportion, dtype: float64
 
 Saved combined pretrain dataset to: datasets/pretrain.csv
 Final shape: (118802, 2)
-'''
+"""
