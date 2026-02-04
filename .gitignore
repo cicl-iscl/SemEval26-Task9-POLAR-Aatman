@@ -222,3 +222,4 @@ submissions/
 **finetune_results/
 !finetune.log
 !evaluation.log
+**finetune_results_xlm_roberta/
