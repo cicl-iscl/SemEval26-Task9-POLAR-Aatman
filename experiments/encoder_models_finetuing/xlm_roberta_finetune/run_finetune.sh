@@ -79,8 +79,8 @@ $RUN_CMD finetune_xlm_roberta.py \
     --data_dir "$DATA_DIR" \
     --output_dir "./finetune_results_xlm_roberta" \
     --submission_dir "./subtask_1_xlm_roberta" \
-    --batch_size 16 \
-    --epochs 10 \
+    --batch_size 32 \
+    --epochs 30 \
     --lr 2e-5 \
     --gradient_accumulation_steps 2 \
     --max_length 256
