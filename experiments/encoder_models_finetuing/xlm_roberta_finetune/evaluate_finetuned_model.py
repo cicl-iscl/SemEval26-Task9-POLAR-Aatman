@@ -121,7 +121,10 @@ def main():
 
     def tokenize_function(examples):
         return tokenizer(
-            examples["text"], padding="max_length", truncation=True, max_length=args.max_length
+            examples["text"],
+            padding="max_length",
+            truncation=True,
+            max_length=args.max_length,
         )
 
     for file in sorted(csv_files):
@@ -187,7 +190,9 @@ def main():
         # Save results to CSV
         results_df = pd.DataFrame(results)
         results_df.to_csv("evaluation_results_per_lang_xlm_roberta.csv", index=False)
-        logger.info("Saved per-language results to evaluation_results_per_lang_xlm_roberta.csv")
+        logger.info(
+            "Saved per-language results to evaluation_results_per_lang_xlm_roberta.csv"
+        )
     else:
         logger.warning("No data found or processed.")
 
